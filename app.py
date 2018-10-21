@@ -115,8 +115,8 @@ def excute_command_in_jail(command):
         defaultrouter='10.0.1.1',
         interfaces='vnet0:bridge0',
     ), new=True)
+    jail.create('11.2-RELEASE')
     try:
-        jail.create('11.2-RELEASE')
         stdout = jail.fork_exec(command)
     except Exception as e:
         click.echo(f'Exception when running command: {command!r}')
