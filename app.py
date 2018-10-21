@@ -76,7 +76,13 @@ def render_stdout(doc: Doc, stdout: list):
 
 @app.route('/', methods=['GET'])
 async def index():
-    return render_index()
+    data = await request.form
+    command = data.get('command', '')
+    if command:
+        stdout = excute_command_in_jail(command)
+    else:
+        stdout = []
+    return render_index(stdout=stdout)
 
 
 @app.route('/exec', methods=["POST"])
@@ -116,7 +122,7 @@ def excute_command_in_jail(command):
         click.echo(f'Exception when running command: {command!r}')
         traceback.print_exc()
     finally:
-        jail.stop()
+        jail.stop(force=True)
         jail.destroy()
     return stdout.split('\n')
 
