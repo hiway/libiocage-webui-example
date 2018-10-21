@@ -13,7 +13,7 @@ from makeweb import (
     Doc, CSS,
     head, meta, title, style, script,
     body, h3, form, _input, label,
-    ul, li, a, img,
+    ul, li, a, img, textarea, div,
 )
 from quart import (
     Quart, request, url_for, abort
@@ -68,6 +68,11 @@ css('#exec_form',
 css('label',
     padding='1em 1em',
     )
+css('textarea',
+    height='100%',
+    width='100%',
+    border='none',
+    )
 
 
 def render_index(stdout: list = None):
@@ -92,7 +97,7 @@ def render_index(stdout: list = None):
             img(src=url_for('static', filename='images/loader.gif'),
                 alt='loading...', id='loading')
     with body():
-        with ul(id='stdout'):
+        with div(id='stdout'):
             if stdout:
                 render_stdout(doc, stdout)
         script(src=url_for('static', filename='js/jquery-3.3.1.min.js'),
@@ -103,8 +108,7 @@ def render_index(stdout: list = None):
 
 
 def render_stdout(doc: Doc, stdout: list):
-    for line in stdout:
-        li(line)
+    textarea(stdout)
     return doc
 
 
@@ -115,7 +119,7 @@ async def index():
     if command:
         stdout = excute_command_in_jail(command)
     else:
-        stdout = []
+        stdout = ''
     return render_index(stdout=stdout)
 
 
@@ -139,7 +143,7 @@ def excute_command_in_jail(command):
         import iocage
     except ImportError:
         click.echo('Unable to import iocage (Try `pip install libiocage`?)')
-        abort(500)
+        return 'Error: libiocage is not installed, or perhaps not running on FreeBSD?'
 
     stdout = ''
     jail = iocage.Jail(dict(
@@ -154,11 +158,12 @@ def excute_command_in_jail(command):
         stdout = jail.fork_exec(command)
     except Exception as e:
         click.echo(f'Exception when running command: {command!r}')
+        stdout = traceback.format_exc()
         traceback.print_exc()
     finally:
         jail.stop(force=True)
         jail.destroy()
-    return stdout.split('\n')
+    return stdout
 
 
 def ensure_certificate_and_key(cert_file_path, key_file_path):
