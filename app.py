@@ -69,7 +69,7 @@ css('label',
     padding='1em 1em',
     )
 css('textarea',
-    height='100%',
+    height='30em',
     width='100%',
     border='none',
     font__family='monaco,monospace,mono'
