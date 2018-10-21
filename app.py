@@ -36,6 +36,38 @@ css = CSS()
 
 css('*',
     font__family='Verdana', )
+css('#loading',
+    display='none',
+    )
+css('#exec_label',
+    color='#888',
+    display='none',
+    )
+css('#exec_input',
+    font__size='1.6em',
+    width='20em',
+    max__width='100%',
+    height='1.8em',
+    padding='0',
+    margin='0',
+    )
+css('#exec_submit',
+    font__size='1.2em',
+    padding='0.85em 0.5em 0.5em 0.5em',
+    margin='0',
+    border='0',
+    )
+css('li',
+    padding__top='0.2em'
+    )
+css('#exec_form',
+    text__align='center',
+    padding='1em 1em',
+    border__bottom='1px #d0d0d0 dashed',
+    )
+css('label',
+    padding='1em 1em',
+    )
 
 
 def render_index(stdout: list = None):
@@ -50,13 +82,15 @@ def render_index(stdout: list = None):
                   title='Type a command to run in a jail.',
                   ic__post__to='/exec',
                   ic__target='#stdout',
-                  # ic__indicator='#loading',
+                  ic__indicator='#loading',
                   ):
             label('Execute in one-shot jail:', _for='#command', id='exec_label')
             _input(id='exec_input', name='command', autofocus=True,
-                   # ic__indicator='#loading',
+                   ic__indicator='#loading',
                    )
             _input(id='exec_submit', type='submit', value='exec')
+            img(src=url_for('static', filename='images/loader.gif'),
+                alt='loading...', id='loading')
     with body():
         with ul(id='stdout'):
             if stdout:
