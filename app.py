@@ -72,6 +72,7 @@ css('textarea',
     height='100%',
     width='100%',
     border='none',
+    font__family='monaco,monospace,mono'
     )
 
 
